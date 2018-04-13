@@ -1,10 +1,9 @@
-﻿using System.Linq.Expressions;
-using Irony.Parsing;
+﻿using Irony.Parsing;
 
 namespace SystemOfSymbolicMathematics
 {
     [Language("Expression")]
-    public class ExpressionGrammar : Irony.Parsing.Grammar
+    public class ExpressionGrammar : Grammar
     {
         public ExpressionGrammar()
         {
@@ -50,6 +49,6 @@ namespace SystemOfSymbolicMathematics
             MarkTransient(terminal, expression, binaryOperator, unaryOperator, parenthesisExpression, argumentList, commandSeparatedIdentifierList);
         }
         
-        public static ExpressionGrammar Instance = new ExpressionGrammar();
+        public static readonly ExpressionGrammar Instance = new ExpressionGrammar();
     }
 }

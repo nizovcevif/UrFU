@@ -7,16 +7,17 @@ namespace SystemOfSymbolicMathematics
 {
     public class Binder
     {
-        Dictionary<string, ParameterExpression> parameters = new Dictionary<string, ParameterExpression>();
+        private readonly Dictionary<string, ParameterExpression> _parameters
+            = new Dictionary<string, ParameterExpression>();
         
         public void RegisterParameter(ParameterExpression parameter)
         {
-            parameters.Add(parameter.Name, parameter);
+            _parameters.Add(parameter.Name, parameter);
         }
 
-        ParameterExpression ResolveParameter(string parameterName)
+        private ParameterExpression ResolveParameter(string parameterName)
         {
-            return parameters.TryGetValue(parameterName, out var parameter) ? parameter : null;
+            return _parameters.TryGetValue(parameterName, out var parameter) ? parameter : null;
         }
 
         public Expression Resolve(string identifier)
@@ -24,10 +25,12 @@ namespace SystemOfSymbolicMathematics
             return ResolveParameter(identifier);
         }
 
-        public MethodInfo ResolveMethod(string functionName)
+        public static MethodInfo ResolveMethod(string functionName)
         {
-            foreach (var methodInfo in typeof(System.Math).GetMethods())
+            for (var index = 0; index < typeof(Math).GetMethods().Length; index++)
             {
+                var methodInfo = typeof(Math).GetMethods()[index];
+                
                 if (methodInfo.Name.Equals(functionName,
                     StringComparison.InvariantCultureIgnoreCase))
                 {

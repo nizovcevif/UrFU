@@ -1,12 +1,14 @@
 ﻿using System;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq.Expressions;
 using Irony.Parsing;
 
 namespace SystemOfSymbolicMathematics
 {
+    [SuppressMessage("ReSharper", "SwitchStatementMissingSomeCases")]
     public class ExpressionTreeBuilder
     {
-        public Binder Binder { get; }
+        private Binder Binder { get; }
         
         public ExpressionTreeBuilder()
         {
@@ -23,32 +25,24 @@ namespace SystemOfSymbolicMathematics
             return result;
         }
 
-        Expression CreateExpression(ParseTreeNode root)
+        private Expression CreateExpression(ParseTreeNode root)
         {
-            if (root.Term.Name == "BinExpr")
+            switch (root.Term.Name)
             {
-                return CreateBinaryExpression(root);
-            }
-
-            if (root.Term.Name == "identifier")
-            {
-                return Binder.Resolve(root.Token.Text);
-            }
-
-            if (root.Term.Name == "number")
-            {
-                return CreateLiteralExpression(Convert.ToDouble(root.Token.Value));
-            }
-
-            if (root.Term.Name == "FunctionCall")
-            {
-                return CreateCallExpression(root);
+                case "BinExpr":
+                    return CreateBinaryExpression(root);
+                case "identifier":
+                    return Binder.Resolve(root.Token.Text);
+                case "number":
+                    return CreateLiteralExpression(Convert.ToDouble(root.Token.Value));
+                case "FunctionCall":
+                    return CreateCallExpression(root);
             }
 
             return null;
         }
 
-        Expression CreateCallExpression(ParseTreeNode root)
+        private Expression CreateCallExpression(ParseTreeNode root)
         {
             var functionName = root.ChildNodes[0].Token.Text;
             var argument = CreateExpression(root.ChildNodes[1]);
@@ -56,12 +50,12 @@ namespace SystemOfSymbolicMathematics
             return Expression.Call(method, argument);
         }
 
-        Expression CreateLiteralExpression(double argument)
+        private static Expression CreateLiteralExpression(double argument)
         {
             return Expression.Constant(argument);
         }
 
-        Expression CreateBinaryExpression(ParseTreeNode node)
+        private Expression CreateBinaryExpression(ParseTreeNode node)
         {
             var left = CreateExpression(node.ChildNodes[0]);
             var right = CreateExpression(node.ChildNodes[2]);

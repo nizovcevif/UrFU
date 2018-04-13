@@ -1,10 +1,9 @@
 ﻿using System;
-using System.Linq.Expressions;
 using Irony.Parsing;
 
 namespace SystemOfSymbolicMathematics
 {
-    public class Compiler
+    public static class Compiler
     {
         public static Func<double, double> CompileFunction(string functionText)
         {
